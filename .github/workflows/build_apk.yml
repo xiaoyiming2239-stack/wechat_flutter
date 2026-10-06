@@ -26,14 +26,18 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Fix Android compileSdkVersion
+        run: |
+          echo "subprojects { subproject -> afterEvaluate { if (subproject.hasProperty('android')) { android { compileSdkVersion 34 } } } }" >> android/build.gradle
+
       - name: Get Dependencies
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --split-per-abi
+        run: flutter build apk --release
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: wechat-apk
-          path: build/app/outputs/flutter-apk/*.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
